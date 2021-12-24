@@ -196,15 +196,8 @@ extension ViewController: UICollectionViewDataSource{
             default: img = UIImage(systemName: "sun.min")
             }
             
-            let day = item.dt * 1000
-            print("day: \(day)")
             
-            let date = Date(timeIntervalSince1970: Double(day))
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "EEE"
-            let dayInWeek = dateFormatter.string(from: date)
-            
-            cell.configure(day: dayInWeek, image: img!, min: "\(String(format: "%.2f", convertToC(degree: item.temp.min)))", max: "\(String(format: "%.2f", convertToC(degree: item.temp.max)))")
+            cell.configure(day: date(timestamp: item.dt, format: "EEEE"), image: img!, min: "\(String(format: "%.2f", convertToC(degree: item.temp.min)))", max: "\(String(format: "%.2f", convertToC(degree: item.temp.max)))")
             
             return cell
         }
