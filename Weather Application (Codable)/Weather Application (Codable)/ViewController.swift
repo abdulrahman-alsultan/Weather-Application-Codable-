@@ -33,7 +33,7 @@ class ViewController: UIViewController {
         let hourlyLayout = UICollectionViewFlowLayout()
         let dailyLayout = UICollectionViewFlowLayout()
         
-        hourlyLayout.itemSize = CGSize(width: 70, height: 100)
+        hourlyLayout.itemSize = CGSize(width: 80, height: 100)
         hourlyLayout.scrollDirection = .horizontal
         hourlyCollectionView.collectionViewLayout = hourlyLayout
         
@@ -50,7 +50,7 @@ class ViewController: UIViewController {
 //https://api.openweathermap.org/data/2.5/onecall?lat=24.774265&lon=46.738586&exclude=alerts&appid=a289ac6dfb995ed665c3559082f2c52b
     
     func getData(){
-        guard let url = URL(string: "https://api.openweathermap.org/data/2.5/onecall?lat=25.8759&lon=45.3731&appid=f2763f64328617a339894577e9107052"
+        guard let url = URL(string: "https://api.openweathermap.org/data/2.5/onecall?lat=26.4207&lon=50.0888&appid=f2763f64328617a339894577e9107052&units=metric"
         ) else { return }
         
         let task = URLSession.shared.dataTask(with: url, completionHandler: {
@@ -97,7 +97,7 @@ class ViewController: UIViewController {
     }
     
     func convertToC(degree: Double) -> Double{
-        return degree - 273.15
+        return degree // - 273.15
     }
 }
 
@@ -110,14 +110,14 @@ extension ViewController: UICollectionViewDataSource{
         return hourlyList?.count ?? 0
     }
     
-    func timeFormatter(Time seconds: Int) -> String{
-        let  formatter = DateFormatter()
-        formatter.dateStyle = .none
-        formatter.timeStyle = .short
-        let date = Date(timeIntervalSince1970: Double(seconds))
-        
-        let timeString = formatter.string(from: date)
-        return timeString
+    
+    func date(timestamp: Int?, format: String)-> String{
+        let date = Date(timeIntervalSince1970: Double(timestamp ?? 0))
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = TimeZone(abbreviation: "GMT") //Set timezone that you want
+        dateFormatter.locale = NSLocale.current
+        dateFormatter.dateFormat = format //Specify your format that you want
+        return dateFormatter.string(from: date)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -157,9 +157,7 @@ extension ViewController: UICollectionViewDataSource{
             default: img = UIImage(systemName: "sun.min")
             }
             
-            print(time.dt*1000)
-            
-            cell.configure(h: "\(timeFormatter(Time: time.dt * 1000))", image: img!, d: "\(String(format: "%.2f", convertToC(degree: time.temp)))")
+            cell.configure(h: date(timestamp: hourlyList?[indexPath.row].dt, format: "h a"), image: img!, d: "\(String(format: "%.2f", convertToC(degree: time.temp)))")
             
             
             return cell
@@ -220,7 +218,7 @@ extension ViewController: UICollectionViewDelegateFlowLayout{
         if collectionView == dailyCollectionView{
             return CGSize(width: dailyCollectionView.frame.size.width, height: dailyCollectionView.frame.size.height/7)
         }
-        return CGSize(width: 100, height: 120)
+        return CGSize(width: 110, height: 120)
     }
 }
 
